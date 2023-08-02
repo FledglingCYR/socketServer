@@ -14,6 +14,7 @@ int serverListener::init(){
     return initServer();
 }
 int serverListener::waitPollEvent(const std::vector<clientConnector*> &i_clientConnectorVec, std::vector<pollfd> &o_pollFdVec, unsigned int &o_pollFdNum){
+    DPrintfMySocket("serverListener::waitPollEvent \n");
     o_pollFdVec.push_back({.fd = g_serverFd, .events = POLLIN, .revents = 0});//监听g_serverFd是否可读
     for(const auto &e : i_clientConnectorVec){
         o_pollFdVec.push_back({.fd = e->Socket(), .events = POLLIN, .revents = 0});//监听客户端描述符是否可读
@@ -36,4 +37,5 @@ int serverListener::initServer(){
         EPrintfMySocket("Error: server(%s) init failed \n", ServerName);
         return -1;
     }
+    return 0;
 }

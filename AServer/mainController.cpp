@@ -19,7 +19,7 @@ using std::lock_guard;
 using std::mutex;
 
 mainController::mainController()
-    : g_stop(0), g_clientConnectorVec(2, nullptr),
+    : g_stop(0),
     g_serverListenerPtr(new (serverListener)),
     msgBroadcastPtr(new msgBroadcast())
 {
@@ -40,14 +40,17 @@ mainController::~mainController(){
 }
 
 void mainController::init(){
+    DPrintfMySocket("mainController::init()\n");
     int ret = g_serverListenerPtr->init();
     assert(ret == 0);
     receiveThreadPtr = std::make_shared<std::thread>(&mainController::receiveThread, this);
     sendThreadPtr = std::make_shared<std::thread>(&mainController::sendThread, this);
+    DPrintfMySocket("mainController::init() end\n");
 }
 
 
 void mainController::receiveThread(){
+    DPrintfMySocket("mainController::receiveThread()\n");
     signal(SIGPIPE, SIG_IGN);
     int ret = -1;
     while(!g_stop.load()){
@@ -65,12 +68,13 @@ void mainController::receiveThread(){
             sleep(1);
             continue;
         }
-
+        DPrintfMySocket("t_pollFdNum = %d \n", t_pollFdNum);
         ret = acceptNewClient(t_pollFdVec, t_pollFdNum);
-        if(ret < 0 || t_pollFdNum == 0){
+        if(ret < 0){
             continue;
         }
 
+        DPrintfMySocket("t_pollFdNum = %d \n", t_pollFdNum);
         vector<parsedData> t_parsedDataVec;
         t_parsedDataVec.reserve(t_pollFdNum);
         getParsedDataFromAllClient(t_pollFdVec, t_pollFdNum, t_parsedDataVec);
@@ -79,6 +83,7 @@ void mainController::receiveThread(){
 
         for(auto e : t_parsedDataVec){
             memcpy(t_msg.msgBuf, &e, std::min(msgBroadcastCommon::MessageMaxLen, static_cast<int>(sizeof(parsedData)) ));
+            DPrintfMySocket("msgBroadcastPtr->broadcast");
             msgBroadcastPtr->broadcast(&t_msg);
         }
     }
@@ -87,15 +92,16 @@ void mainController::sendThread(){
 
 }
 int mainController::acceptNewClient(const vector<pollfd> &i_pollFdVec, unsigned int &o_pollFdNum){
-    if(o_pollFdNum == 0){
-        return -1;
-    }
-    --o_pollFdNum;
     if(i_pollFdVec.at(0).revents & (POLLIN | POLLERR)){
         if(acceptANewClient(i_pollFdVec.at(0).fd) < 0){
             return -1;
         }
+        if(o_pollFdNum == 0){
+            return -1;
+        }
+        --o_pollFdNum;
     }
+    return 0;
 }
 int mainController::acceptANewClient(const int& pollFd){
     IPrintfMySocket("wait a new client to connect \n");

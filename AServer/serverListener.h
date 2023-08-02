@@ -20,7 +20,7 @@ class serverListener{
 
         // std::shared_ptr<std::thread> listenThreadPtr;
         int g_serverFd = -1;
-        const char ServerName[27] = "./.testServer";
+        const char ServerName[27] = "/tmp/.qtDPH_srv";
         const unsigned maxSocketClientNum = 2;
 };
 
