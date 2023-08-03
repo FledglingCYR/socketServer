@@ -33,6 +33,11 @@ mainController::~mainController(){
         pthread_cancel(receiveThreadPtr->native_handle());//终止该线程阻塞的系统调用
         receiveThreadPtr->join();
     }
+    {
+        lock_guard<mutex> lck(g_sendQueue.QueueMutex);
+        g_sendQueue.stop = true;
+        g_sendQueue.QueueCond.notify_one();
+    }
     if(sendThreadPtr->joinable()){
         pthread_cancel(sendThreadPtr->native_handle());//终止该线程阻塞的系统调用
         sendThreadPtr->join();
@@ -48,6 +53,16 @@ void mainController::init(){
     DPrintfMySocket("mainController::init() end\n");
 }
 
+int mainController::broadcastToClient(const char* buf, const unsigned int bufLen){
+    DPrintfMySocket("mainController::broadcastToClient a %d-len buf\n", bufLen);
+    std::vector<char> t_sendData(buf, buf+bufLen);
+    {
+        lock_guard<mutex> lck(g_sendQueue.QueueMutex);
+        g_sendQueue.DataQueue.push(std::move(t_sendData));
+        g_sendQueue.QueueCond.notify_one();
+    }
+    return 0;
+}
 
 void mainController::receiveThread(){
     DPrintfMySocket("mainController::receiveThread()\n");
@@ -89,6 +104,31 @@ void mainController::receiveThread(){
     }
 }
 void mainController::sendThread(){
+    DPrintfMySocket("mainController::sendThread()\n");
+    signal(SIGPIPE, SIG_IGN);
+    int ret = -1;
+    while(!g_stop.load()){
+        std::vector<char> t_sendData;
+        {
+            std::unique_lock<std::mutex> lck(g_sendQueue.QueueMutex);
+            g_sendQueue.QueueCond.wait(lck, [this]{
+                return !g_sendQueue.DataQueue.empty() || g_sendQueue.stop;
+            });
+            if(g_sendQueue.stop){
+                IPrintfMySocket("g_sendQueue.stop=true, SendPacketThread exit\n");
+                break;
+            }
+            t_sendData = g_sendQueue.DataQueue.front();
+            g_sendQueue.DataQueue.pop();
+        }
+        //broadcast
+        {
+            lock_guard<mutex> lck(g_clientVecConnectorMutex);
+            for(auto e : g_clientConnectorVec){
+                e->SendData(t_sendData.data(), t_sendData.size());
+            }
+        }
+    }
 
 }
 int mainController::acceptNewClient(const vector<pollfd> &i_pollFdVec, unsigned int &o_pollFdNum){

@@ -1,6 +1,5 @@
 #include "clientConnector.h"
 #include "dataParser.h"
-// #include "../read_write.h"
 #include "../comdebug.h"
 
 
@@ -8,6 +7,7 @@
 #include <string.h>//for strerror
 #include <unistd.h>//for read
 
+#include "../read_write.h"//for write_sure
 
 clientConnector::clientConnector
     (int socket): g_socket(socket), g_dataParser(new dataParser()), g_receiveBuf(SEND_PACKET_MAX_LEN, 0)
@@ -25,8 +25,18 @@ int clientConnector::GetparsedData(std::vector<parsedData> &o_parsedDataVec){
     return dataLen;
 }
 
+int clientConnector::SendData(char *data, unsigned dataLen){
+    DPrintfMySocket("ClientSocket::SendData(dataLen=%d) \n", dataLen);
+    if(dataLen > SEND_PACKET_MAX_LEN){
+        EPrintfMySocket("Error: the len(%d) of data is too long, and the max len is %d \n", dataLen, SEND_PACKET_MAX_LEN);
+        return -1;
+    }
+    printBuf(data, dataLen, "socketfdSendAPacket:");
+    return socketfdSendAPacket(g_socket, data, dataLen);
+}
+
 //read all data from socket if buf is nut full;会阻塞。
-int clientConnector::socketfdRecvAPacket(int socketfd, void* buf, int buf_size){
+int clientConnector::socketfdRecvAPacket(int socketfd, void* buf, unsigned buf_size){
     if(socketfd < 0){
         return -1;
     }
@@ -47,4 +57,12 @@ int clientConnector::socketfdRecvAPacket(int socketfd, void* buf, int buf_size){
         return len;
     }
     return -1;
+}
+
+int clientConnector::socketfdSendAPacket(int socketfd, void* buf, unsigned send_size){
+    if (socketfd <= 0) {
+        EPrintfMySocket("socket invalid:%d\n", socketfd);
+        return -1;
+    }
+    return write_sure(socketfd, (unsigned char*)buf, (int)send_size);
 }

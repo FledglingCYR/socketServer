@@ -1,6 +1,8 @@
 #ifndef __H__MAINCONTROLLER_
 #define __H__MAINCONTROLLER_
 
+#include "../MyQueueStruct.h"
+
 #include <vector>
 #include <atomic>
 #include <mutex>
@@ -18,6 +20,7 @@ class mainController{
         mainController();
         ~mainController();
         void init();
+        int broadcastToClient(const char* buf, const unsigned int bufLen);
     private:
         void receiveThread();
         void sendThread();
@@ -29,6 +32,7 @@ class mainController{
         std::shared_ptr<std::thread> receiveThreadPtr;
         std::shared_ptr<std::thread> sendThreadPtr;
 
+        MyQueueStruct<std::vector<char>> g_sendQueue;
         std::shared_ptr<serverListener> g_serverListenerPtr;
         std::shared_ptr<msgBroadcast> msgBroadcastPtr;
         std::vector<clientConnector*>  g_clientConnectorVec;
