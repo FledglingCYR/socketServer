@@ -1,6 +1,6 @@
 
 #include "mainController.h"
-#include "../comdebug.h"
+#include "comdebug.h"
 #include <unistd.h>
 
 int main(){

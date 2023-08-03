@@ -1,7 +1,7 @@
 #include "serverListener.h"
 #include "clientConnector.h"
-#include "../comdebug.h"
-#include "../SocketUtils.h"
+#include "comdebug.h"
+#include "SocketUtils.h"
 
 #include <sys/socket.h>//for SOCK_STREAM
 #include <unistd.h>//for TEMP_FAILURE_RETRY

@@ -5,6 +5,7 @@
 // #define ANDROID_RESERVED_SOCKET_PREFIX "/dev/socket/"
 
 #include <string>
+#include <sys/types.h>
 
 // Network Socket
 

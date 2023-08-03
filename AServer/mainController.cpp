@@ -1,7 +1,7 @@
 #include "mainController.h"
 #include "serverListener.h"
 #include "clientConnector.h"
-#include "../comdebug.h"
+#include "comdebug.h"
 #include "sigslotCommon.h"
 #include "dataParser.h"
 

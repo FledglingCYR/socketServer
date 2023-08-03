@@ -1,7 +1,7 @@
 #ifndef __H__MAINCONTROLLER_
 #define __H__MAINCONTROLLER_
 
-#include "../MyQueueStruct.h"
+#include "MyQueueStruct.h"
 
 #include <vector>
 #include <atomic>

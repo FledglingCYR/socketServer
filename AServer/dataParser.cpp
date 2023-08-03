@@ -1,5 +1,5 @@
 #include "dataParser.h"
-#include "../comdebug.h"
+#include "comdebug.h"
 #include <algorithm>
 #include <vector>
 #include <mutex>

@@ -1,6 +1,6 @@
 #ifndef __HH__SIGSLOTCOMMON_
 #define __HH__SIGSLOTCOMMON_
-#include "../sigslot/sigslot.h"
+#include "sigslot.h"
 #include <functional>
 
 namespace msgBroadcastCommon{

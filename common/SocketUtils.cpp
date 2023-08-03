@@ -13,6 +13,7 @@
 #include <netinet/tcp.h>
 #include <sys/un.h>
 #include <stddef.h>
+#include <stdio.h>
 
 #define LISTEN_BACKLOG 5
 

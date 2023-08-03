@@ -1,13 +1,13 @@
 #include "clientConnector.h"
 #include "dataParser.h"
-#include "../comdebug.h"
+#include "comdebug.h"
 
 
 #include <errno.h>//for errno
 #include <string.h>//for strerror
 #include <unistd.h>//for read
 
-#include "../read_write.h"//for write_sure
+#include "read_write.h"//for write_sure
 
 clientConnector::clientConnector
     (int socket): g_socket(socket), g_dataParser(new dataParser()), g_receiveBuf(SEND_PACKET_MAX_LEN, 0)
