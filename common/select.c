@@ -1,11 +1,3 @@
-/********************************************************************************
-**  (C) COPYRIGHT 2018 
-**	author	:	HuangZiBin
-**  E-mail	:	635568706@qq.com
-** 	version	:	1.0.1
-**	If you find bugs, please contact me.Thank you!
-********************************************************************************/
-//该程序出自man
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>

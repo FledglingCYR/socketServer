@@ -1,10 +1,3 @@
-/********************************************************************************
-**  (C) COPYRIGHT 2018 
-**	author	:	HuangZiBin
-**  E-mail	:	635568706@qq.com
-** 	time	:	2019-09-27 13:44
-**	If finding bugs, bother you contacting me.Thank you
-********************************************************************************/
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
@@ -12,6 +5,7 @@
 #include <fcntl.h>
 #include <string.h>
 #include "select.h"
+#include "read_write.h"
 
 #define FILE_NAME "../read_write.c"
 #define BUF_SIZE 10000

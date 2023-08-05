@@ -9,10 +9,14 @@
 
 #include "read_write.h"//for write_sure
 
-clientConnector::clientConnector
-    (int socket): g_socket(socket), g_dataParser(new dataParser()), g_receiveBuf(SEND_PACKET_MAX_LEN, 0)
+clientConnector::clientConnector(int socket)
+    : g_socket(socket), g_dataParser(new dataParser()), g_receiveBuf(SEND_PACKET_MAX_LEN, 0)
 {
 
+}
+clientConnector::~clientConnector(){
+    DPrintfMySocket("clientConnector::~clientConnector() \n");
+    close(g_socket);
 }
 
 int clientConnector::GetparsedData(std::vector<parsedData> &o_parsedDataVec){
@@ -25,7 +29,7 @@ int clientConnector::GetparsedData(std::vector<parsedData> &o_parsedDataVec){
     return dataLen;
 }
 
-int clientConnector::SendData(char *data, unsigned dataLen){
+int clientConnector::SendData(unsigned char *data, unsigned dataLen){
     DPrintfMySocket("ClientSocket::SendData(dataLen=%d) \n", dataLen);
     if(dataLen > SEND_PACKET_MAX_LEN){
         EPrintfMySocket("Error: the len(%d) of data is too long, and the max len is %d \n", dataLen, SEND_PACKET_MAX_LEN);

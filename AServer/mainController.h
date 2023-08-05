@@ -14,28 +14,30 @@ struct parsedData;
 class msgBroadcast;
 class serverListener;
 class clientConnector;
+class msgReceiverBase;
 
 class mainController{
     public:
         mainController();
         ~mainController();
         void init();
-        int broadcastToClient(const char* buf, const unsigned int bufLen);
+        void broadcastToClient(const unsigned char* buf, const unsigned int bufLen);
+        void addReceiver(msgReceiverBase* new_receiver);
     private:
         void receiveThread();
         void sendThread();
-        int acceptNewClient(const std::vector<pollfd> &i_pollFdVec, unsigned int &o_pollFdNum);
+        int handleNewClientEvent(const std::vector<pollfd> &i_pollFdVec, unsigned int &o_pollFdNum);
         int acceptANewClient(const int& pollFd);
-        int getParsedDataFromAllClient(const std::vector<pollfd>& i_pollFdVec, unsigned int &i_pollFdNum, std::vector<parsedData> &o_parsedDataVec);
+        int handleNewDataEvent(const std::vector<pollfd>& i_pollFdVec, unsigned int &i_pollFdNum, std::vector<parsedData> &o_parsedDataVec);
   
         std::atomic<char> g_stop;
         std::shared_ptr<std::thread> receiveThreadPtr;
         std::shared_ptr<std::thread> sendThreadPtr;
 
-        MyQueueStruct<std::vector<char>> g_sendQueue;
+        MyQueueStruct<std::vector<unsigned char>> g_sendQueue;
         std::shared_ptr<serverListener> g_serverListenerPtr;
-        std::shared_ptr<msgBroadcast> msgBroadcastPtr;
-        std::vector<clientConnector*>  g_clientConnectorVec;
+        std::shared_ptr<msgBroadcast> g_msgBroadcastPtr;
+        std::vector<std::shared_ptr<clientConnector>> g_clientConnectorVec;
         std::mutex g_clientVecConnectorMutex;
 };
 

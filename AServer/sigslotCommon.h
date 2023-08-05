@@ -4,18 +4,19 @@
 #include <functional>
 
 namespace msgBroadcastCommon{
-    using namespace std;
     enum{ MAX_NAME_LENGTH = 16 };
-    const int MessageMaxLen = 2046;
+    const unsigned short MessageMaxLen = 2046;
     struct Message{
-        char msgBuf[MessageMaxLen] = {0};
+        unsigned short msgCmd = 0;
+        unsigned short msgLen = 0;
+        unsigned char msgBuf[MessageMaxLen] = {0};
     };
     using slotFunPtr = std::function<void(Message*)>;
 };
 
 class msgReceiverBase : public sigslot::has_slots<>{
     public:
-        virtual ~msgReceiverBase() = 0;
+        virtual ~msgReceiverBase() = default;
         virtual void handleMsg(msgBroadcastCommon::Message* msgPtr) = 0;
 };
 

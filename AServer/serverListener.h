@@ -1,7 +1,6 @@
 #ifndef __H__SERVERLISTENER_
 #define __H__SERVERLISTENER_
-// #include <memory>
-// #include <thread>
+#include <memory>
 #include <vector>
 #include <poll.h>
 
@@ -11,14 +10,11 @@ class clientConnector;
 class serverListener{
     public:
         serverListener() = default;
-        ~serverListener() = default;
+        ~serverListener();
         int init();
-        int waitPollEvent(const std::vector<clientConnector*> &i_clientConnectorVec, std::vector<pollfd> &o_pollFdVec, unsigned int &o_pollFdNum);
+        int waitPollEvent(const std::vector<std::shared_ptr<clientConnector>> &i_clientConnectorVec, std::vector<pollfd> &o_pollFdVec, unsigned int &o_pollFdNum);
     private:
         int initServer();
-        // void listenThread();
-
-        // std::shared_ptr<std::thread> listenThreadPtr;
         int g_serverFd = -1;
         const char ServerName[27] = "/tmp/.qtDPH_srv";
         const unsigned maxSocketClientNum = 2;

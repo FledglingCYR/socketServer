@@ -42,7 +42,7 @@ unsigned dataParser::ParseReceivedData(char* str, unsigned len, std::vector<pars
     
     memcpy((leftBuf + leftBufLen), str, len);
     leftBufLen += len;
-    printBuf(leftBuf, leftBufLen, "leftBuf");
+    printBuf((unsigned char*)leftBuf, leftBufLen, "leftBuf");
 
     int handledLen = ParseReceivedData2(leftBuf, leftBufLen, dataPacketVec);
     DPrintfMySocket("Debug: ParseReceivedData2 finish , handledLen=%d\n", handledLen);
@@ -72,7 +72,7 @@ int dataParser::ParseReceivedData2(char* str, unsigned len, std::vector<parsedDa
         return 0;
     }
 
-    printBuf(str, len, "to parse data");
+    printBuf((unsigned char*)str, len, "to parse data");
     unsigned int parsedDataLen = 0;
     char* end = str+len;
     char* search_ptr = str;
@@ -84,7 +84,7 @@ int dataParser::ParseReceivedData2(char* str, unsigned len, std::vector<parsedDa
         head_ptr = std::search_n(search_ptr, end, 2, QT_DISPATCH_COM_HEAD_FLAG);
         if(head_ptr != end){
             /*found the head*/
-            DPrintfMySocket("pos of head_ptr is %d \n", head_ptr-str);
+            DPrintfMySocket("pos of head_ptr is %td \n", head_ptr-str);
             if((head_ptr+QT_DISPATCH_COM_MIN_MSG_LEN) > (str+len)){
                 /*说明数据不足，等下次数据补全后再次进行解析*/
                 parsedDataLen = head_ptr - str;

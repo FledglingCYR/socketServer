@@ -1,16 +1,12 @@
 cmake_minimum_required(VERSION 3.5)
-project(AServer)
-
-#set(CMAKE_CXX_COMPILER arm-linux-gnueabihf-g++)
-#set(CMAKE_C_COMPILER arm-linux-gnueabihf-gcc)
-
+project(AClient)
 set(CMAKE_CXX_COMPILER g++)
 set(CMAKE_C_COMPILER gcc)
 set(CMAKE_CXX_FLAGS -std=c++11)
+
 include_directories(.)
 include_directories(../common)
-include_directories(../common/sigslot)
 FILE(GLOB SRC_LIST "*.cpp" "../common/*.c" "../common/*.cpp")
 #FILE(GLOB SRC_C_LIST "*.c")
-add_executable(AServer ${SRC_LIST})
-target_link_libraries(AServer pthread)
+add_executable(AClient ${SRC_LIST})
+target_link_libraries(AClient pthread)
