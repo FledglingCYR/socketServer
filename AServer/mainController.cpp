@@ -196,7 +196,6 @@ int mainController::handleNewDataEvent(const vector<pollfd>& i_pollFdVec, unsign
                 /*到这说明：要么是POLLHUP和POLLNVAL置一, 要么是获取数据失败*/
                 IPrintfMySocket("Warn: one client(%p) disconnect. \n", (*it).get());
                 IPrintfMySocket("g_clientVec.size()=%zu \n", g_clientConnectorVec.size());
-                // delete (*it);
                 g_clientConnectorVec.erase(it);
             }
         }
