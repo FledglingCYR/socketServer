@@ -18,7 +18,7 @@ class msgReceiverBase;
 
 class mainController{
     public:
-        mainController();
+        mainController(const std::string serverName);
         ~mainController();
         void init();
         void broadcastToClient(const unsigned char* buf, const unsigned int bufLen);

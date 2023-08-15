@@ -36,7 +36,7 @@ AClient::~AClient()
     close(g_clientFd);
 }
 void AClient::init(){
-    initClient();//
+    initClient();
     return;
 }
 
@@ -87,7 +87,7 @@ void AClient::ReceiveThread(){
                 /*reconnect*/
                 close(g_clientFd);
                 g_clientFd = -1;
-CONNECT_SERVER:
+            CONNECT_SERVER:
                 connectWithServer();
                 continue;
             }

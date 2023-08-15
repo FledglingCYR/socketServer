@@ -18,9 +18,9 @@ using std::vector;
 using std::lock_guard;
 using std::mutex;
 
-mainController::mainController()
+mainController::mainController(const std::string serverName)
     : g_stop(0),
-    g_serverListenerPtr(new (serverListener)),
+    g_serverListenerPtr(new serverListener(serverName)),
     g_msgBroadcastPtr(new msgBroadcast())
 {
 
@@ -52,7 +52,6 @@ void mainController::init(){
     assert(ret == 0);
     receiveThreadPtr = std::make_shared<std::thread>(&mainController::receiveThread, this);
     sendThreadPtr = std::make_shared<std::thread>(&mainController::sendThread, this);
-    DPrintfMySocket("mainController::init() end\n");
     return;
 }
 
@@ -78,7 +77,7 @@ void mainController::receiveThread(){
     signal(SIGPIPE, SIG_IGN);
     int ret = -1;
     while(!g_stop.load()){
-        std::vector<std::shared_ptr<clientConnector>> t_clientConnectorVec;
+        vector<std::shared_ptr<clientConnector>> t_clientConnectorVec;
         {
             lock_guard<mutex> lck(g_clientVecConnectorMutex);
             t_clientConnectorVec = g_clientConnectorVec;

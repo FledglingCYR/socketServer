@@ -8,6 +8,12 @@
 #include <errno.h>
 #include <string.h>//for strerror
 
+serverListener::serverListener(const std::string &serverName)
+    :g_serverName(serverName)
+{
+
+}
+
 serverListener::~serverListener(){
     close(g_serverFd);
 }
@@ -34,9 +40,10 @@ int serverListener::waitPollEvent(const std::vector<std::shared_ptr<clientConnec
 }
 
 int serverListener::initServer(){
-    g_serverFd = SocketLocalServer(ServerName, SOCK_STREAM, maxSocketClientNum);
+    DPrintfMySocket("serverListener::initServer \n");
+    g_serverFd = SocketLocalServer(g_serverName.c_str(), SOCK_STREAM, maxSocketClientNum);
     if(g_serverFd < 0){
-        EPrintfMySocket("Error: server(%s) init failed \n", ServerName);
+        EPrintfMySocket("Error: server(%s) init failed \n", g_serverName.c_str());
         return -1;
     }
     return 0;
